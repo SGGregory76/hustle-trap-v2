@@ -1,0 +1,87 @@
+{
+  "resources": {
+    "weed":   { "name": "Weed",        "baseValue": 10 },
+    "cocaine":{ "name": "Cocaine",     "baseValue": 50 },
+    "xanax":  { "name": "Xanax",       "baseValue": 30 },
+    "paper":  { "name": "Rolling Paper","baseValue": 2 },
+    "binder": { "name": "Binder",      "baseValue": 5 }
+  },
+  "items": {
+    "smoke_pill": {
+      "ingredients": ["weed","paper"],
+      "craftTime": 60,
+      "qualityMod": 1.2
+    },
+    "speed_pill": {
+      "ingredients": ["cocaine","binder"],
+      "craftTime": 120,
+      "qualityMod": 1.5
+    }
+  },
+  "npcs": {
+    "blaze": {
+      "displayName":"Blaze",
+      "initialMood":"neutral",
+      "drugPreferences":["weed"],
+      "priceMultiplier":{"buy":1.0,"sell":0.8},
+      "missions":["blaze_prologue"]
+    },
+    "maya": {
+      "displayName":"Maya",
+      "initialMood":"irritated",
+      "drugPreferences":["xanax","weed"],
+      "priceMultiplier":{"buy":1.1,"sell":0.9},
+      "missions":["maya_intro","maya_followup"]
+    }
+  },
+  "missions": {
+    "blaze_prologue": {
+      "title":"Blaze’s Prologue",
+      "unlockCondition":null,
+      "steps":[
+        { "type":"dialog", "text":"Welcome to the Hustle Trap. First off, let me see you’ve got the basics." },
+        {
+          "type":"question",
+          "text":"How much cash can you offer?",
+          "options":[
+            { "text":"$100", "rewards":{ "cash":-100,"rep":10 }},
+            { "text":"$200", "rewards":{ "cash":-200,"rep":25 }}
+          ]
+        },
+        {
+          "type":"question",
+          "text":"Do you have any product to show?",
+          "options":[
+            { "text":"Weed",    "rewards":{ "rep":15 }},
+            { "text":"Nothing", "rewards":{ "rep":0, "heat":5 }}
+          ]
+        },
+        {
+          "type":"question",
+          "text":"Long-term gains or quick flips?",
+          "options":[
+            { "text":"Long-term", "rewards":{ "rep":20,"rp":5 }},
+            { "text":"Quick",     "rewards":{ "cash":50,"heat":10 }}
+          ]
+        },
+        { "type":"dialog", "text":"Alright, show me what you got next time. Stay sharp." }
+      ],
+      "completionRewards":{ "rep":50,"heat":10,"rp":5 }
+    }
+  },
+  "economy": {
+    "inflationRate":0.02,
+    "entropyFactor":0.1,
+    "marketEvents":[
+      { "day":3, "effect":{ "cocaine":{ "baseValue":60 } } }
+    ]
+  },
+  "map": {
+    "locations":[
+      { "id":"store",     "icon":"🏪","locked":false },
+      { "id":"warehouse", "icon":"📦","locked":true, "unlock":{ "rep":100 } },
+      { "id":"npc_zone",  "icon":"🚧","locked":false }
+    ],
+    "connections":[["store","warehouse"],["store","npc_zone"]]
+  }
+}
