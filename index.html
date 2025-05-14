@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Burner OS</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      display: flex; justify-content: center; align-items: center;
+      background: #111;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .phone-frame {
+      box-sizing: border-box;
+      width: 100vw; height: 100vh;
+      border: 16px solid #222;
+      border-radius: 40px;
+      background: #333;
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    }
+    .phone-frame::before {
+      content: ''; position: absolute;
+      top: 8px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 6px; background: #555; border-radius: 3px;
+    }
+    .phone-frame::after {
+      content: ''; position: absolute;
+      bottom: 8px; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 6px; background: #555; border-radius: 3px;
+    }
+    .phone-screen {
+      position: absolute;
+      top: 16px; bottom: 16px; left: 16px; right: 16px;
+      background: #121212;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    #nav-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 8px; padding: 12px;
+      background: #1e1e1e;
+      align-items: center; justify-items: center;
+    }
+    #nav-grid button {
+      background: #2a2a2a;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #nav-grid button span {
+      font-size: 40px;
+      line-height: 1;
+    }
+    #game-frame {
+      flex: 1; width: 100%; border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div id="nav-grid"></div>
+      <iframe id="game-frame" scrolling="yes"></iframe>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load JSON data
+      let GAME = {};
+      try {
+        const res = await fetch('https://cdn.jsdelivr.net/gh/YourUser/hustle-trap-v2@main/data/game-data.json');
+        GAME = await res.json();
+      } catch(e) {
+        console.error('Game data load error', e);
+      }
+
+      // Setup nav buttons
+      const pages = [
+        { icon:'🗡️', url:'/p/missions.html?m=1' },
+        { icon:'👥', url:'/p/contacts.html?m=1' },
+        { icon:'🎒', url:'/p/inventory.html?m=1' },
+        { icon:'🗺️', url:'/p/map.html?m=1' },
+        { icon:'📜', url:'/p/log.html?m=1' },
+        { icon:'⚙️', url:'/p/settings.html?m=1' }
+      ];
+      const navGrid = document.getElementById('nav-grid');
+      pages.forEach(p => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `<span>${p.icon}</span>`;
+        btn.onclick = () => document.getElementById('game-frame').src = p.url;
+        navGrid.appendChild(btn);
+      });
+
+      // Auto-load first page
+      if (pages.length) document.getElementById('game-frame').src = pages[0].url;
+    });
+  </script>
+</body>
+</html>
