@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contacts</title>
+  <style>
+    body { margin:0; padding:16px; background:#121212; color:#fff; font-family:'Segoe UI', sans-serif; }
+    h1 { text-align:center; margin-bottom:16px; }
+    .contacts-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .contact-card { background:#1e1e1e; border-radius:12px; padding:12px; display:flex; align-items:center; cursor:pointer; }
+    .contact-card img { width:40px; height:40px; border-radius:50%; margin-right:12px; }
+    .contact-card .info { flex:1; }
+    .contact-card .name { font-size:16px; }
+    /* Modal styles */
+    .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; }
+    .modal-overlay.active { display:flex; }
+    .modal-content { background:#222; border-radius:16px; width:90%; max-width:320px; max-height:90%; overflow-y:auto; padding:16px; box-shadow:0 0 20px rgba(0,0,0,0.7); }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .modal-header h2 { margin:0; font-size:20px; }
+    .close-btn { background:transparent; border:none; font-size:24px; color:#fff; cursor:pointer; }
+    .profile-section { margin-bottom:12px; }
+    .profile-section h3 { margin:8px 0; font-size:16px; }
+    .actions button { width:100%; padding:12px; margin-bottom:8px; background:#444; border:none; border-radius:8px; color:#fff; font-size:16px; cursor:pointer; }
+    .actions button:disabled { background:#555; cursor:default; }
+  </style>
+</head>
+<body>
+  <h1>Contacts</h1>
+  <div class="contacts-grid" id="contacts-grid"></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="npc-name"></h2>
+        <button class="close-btn" id="close">×</button>
+      </div>
+      <div class="profile-section">
+        <div><strong>Mood:</strong> <span id="npc-mood"></span></div>
+        <div><strong>On Drug:</strong> <span id="npc-drug"></span></div>
+      </div>
+      <div class="profile-section">
+        <h3>Behavior</h3>
+        <p id="npc-behavior"></p>
+      </div>
+      <div class="profile-section actions">
+        <button id="buy-btn">Buy</button>
+        <button id="sell-btn">Sell</button>
+        <button id="give-btn">Give</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async function() {
+      // Load NPC data
+      let npcs = {};
+      try {
+        const res = await fetch('https://cdn.jsdelivr.net/gh/YourUser/hustle-trap-v2@main/data/npcs.json');
+        npcs = await res.json();
+      } catch(e) { console.error(e); }
+
+      const grid = document.getElementById('contacts-grid');
+      Object.entries(npcs).forEach(([key, npc]) => {
+        const card = document.createElement('div');
+        card.className = 'contact-card';
+        card.innerHTML = `<img src="https://via.placeholder.com/40" alt="${npc.displayName}" /><div class="info"><div class="name">${npc.displayName}</div></div>`;
+        card.onclick = () => openModal(key);
+        grid.appendChild(card);
+      });
+
+      const modal = document.getElementById('modal');
+      const nameEl = document.getElementById('npc-name');
+      const moodEl = document.getElementById('npc-mood');
+      const drugEl = document.getElementById('npc-drug');
+      const behaviorEl = document.getElementById('npc-behavior');
+
+      document.getElementById('close').onclick = () => modal.classList.remove('active');
+
+      window.openModal = function(key) {
+        const npc = npcs[key];
+        nameEl.textContent = npc.displayName;
+        moodEl.textContent = npc.initialMood;
+        drugEl.textContent = npc.drugPreferences.join(', ');
+        behaviorEl.textContent = `Prefers: ${npc.drugPreferences.join(', ')}`;
+        modal.classList.add('active');
+      };
+
+      // Stub actions
+      document.getElementById('buy-btn').onclick = () => alert('Buy logic');
+      document.getElementById('sell-btn').onclick = () => alert('Sell logic');
+      document.getElementById('give-btn').onclick = () => alert('Give logic');
+    })();
+  </script>
+</body>
+</html>
